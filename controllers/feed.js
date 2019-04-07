@@ -3,12 +3,25 @@ const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 
 const Post = require('../models/post');
+const User = require('../models/user');
+const Like = require('../models/like');
 
 //GET - ALL
 exports.getPosts = (req,res,next) => {
-    Post.findAll().then((posts) => {
-        console.log(posts);
-        res.json({ posts : posts})
+    Post.findAll({include: [User]})
+    .then(posts => { 
+        promises = [];
+        posts.forEach(p => {
+            const postWithLike = Like.count({ where: { postId: p.id } })
+                .then(likes => {
+                    p.dataValues.likes = likes;
+                    return p;
+            });
+            promises.push(postWithLike);
+        });
+        return Promise.all(promises);
+    }).then(posts => {
+        res.json({ posts : posts});
     }).catch(
         err => console.log(err)
     );
