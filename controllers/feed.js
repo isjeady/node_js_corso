@@ -22,9 +22,14 @@ exports.getPost = (req,res,next) => {
 };
 
 exports.searchPost = (req,res,next) => {
-   //.........QUI IL CODICE PER l'esercizio
-   //QUERY:SELECT * FROM posts WHERE posts.title LIKE '%tit%'
-   //req.query.parametro_query
+   const title = '%'+ req.query.title +'%';
+   db.execute('SELECT * FROM posts WHERE posts.title LIKE ?',[title])
+   .then(([rows,fieldData]) => {
+        res.json({ posts : rows})
+   })
+   .catch(
+        err => console.log(err)
+   ); 
 };
 
 
