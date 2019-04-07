@@ -16,17 +16,21 @@ router.post('/post',
     ,feedController.createPost);
     
 router.get('/post',feedController.getPosts);
+router.post('/post/:id/like',feedController.likePost);
+router.get('/post/user/me',feedController.getPostsByMe);
 router.get('/post/search',feedController.searchPost);
 router.get('/post/:id',feedController.getPost);
+router.put('/post/:id',feedController.editPost);
+router.delete('/post/:id',feedController.deletePost);
 
 
 //NO AUTH | AUTH
-//GET ALL /feed/posts
-//GET /feed/post/:id
+//*GET ALL /feed/posts
+//*GET /feed/post/:id
 
-//POST /feed/post
-//PUT /feed/post/:id
-//DELETE /feed/post/:id
+//*POST /feed/post
+//*PUT /feed/post/:id
+//*DELETE /feed/post/:id
 
 //POST /feed/post/:id/like
 

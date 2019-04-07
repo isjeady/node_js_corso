@@ -1,10 +1,14 @@
 const express = require('express');
+const router = express.Router();
+const path = require('path');
 const bodyParser = require('body-parser');
 const feedRoutes = require ('./routes/feed');
 
 //const db = require('./utils/database');
+const sequelize = require('./utils/database');
 
 const app = express();
+
 app.use(bodyParser.json()); //application/json
 
 app.use((req,res,next) => {
@@ -14,9 +18,57 @@ app.use((req,res,next) => {
     next();
 });
 
-
-
 app.use(express.static('public'));
+
+router.get('/',function(req,res){
+    res.sendFile(path.join(__dirname+'/index.html'));
+});
+
+app.use((req,res,next) => {
+    User.findByPk(1).then(user => {
+        req.user = user;
+        next();
+    })
+    .catch(err => {
+        console.log('Error find User');
+    });
+});
+//Routing
+app.use('/',router);
 app.use('/feed',feedRoutes);
 
-app.listen(8080);
+const Post = require('./models/post');
+const User = require('./models/user');
+const Like = require('./models/like');
+
+User.hasMany(Post);
+Post.belongsTo(User,{ constraints : true, onDelete : 'CASCADE'});
+
+User.belongsToMany(Post,{ through : Like});
+Post.belongsToMany(User,{ through : Like});
+
+
+sequelize.authenticate().then( rec => {
+    console.log('Connessione Stabilita con Successo');
+    //sequelize.sync({force:true})
+    sequelize.sync()
+    .then((result) => {return User.findByPk(1);})
+    .then(user => {
+        if(!user){
+            return User.create({ name : 'Leandro', email : 'leandro@email.com', password : '123456'})
+        }
+        return user;
+    })
+    .then((user) => {
+        console.log(user);
+        app.listen(8080);
+    }).catch( err => {
+        console.log('Sync al DB Error:',err);
+    });
+}).catch( err => {
+     console.log('Connession al DB Error:',err);
+});
+
+
+
+
