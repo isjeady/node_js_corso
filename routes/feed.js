@@ -16,6 +16,7 @@ router.post('/post',
     ,feedController.createPost);
     
 router.get('/post',feedController.getPosts);
+router.get('/post/search',feedController.searchPost);
 router.get('/post/:id',feedController.getPost);
 
 

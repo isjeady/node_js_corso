@@ -21,6 +21,12 @@ exports.getPost = (req,res,next) => {
    ); 
 };
 
+exports.searchPost = (req,res,next) => {
+   //.........QUI IL CODICE PER l'esercizio
+   //QUERY:SELECT * FROM posts WHERE posts.title LIKE '%tit%'
+   //req.query.parametro_query
+};
+
 
 exports.createPost = (req,res,next) => {
     const errors = validationResult(req);
