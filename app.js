@@ -2,9 +2,8 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const bodyParser = require('body-parser');
-const feedRoutes = require ('./routes/feed');
 
-//const db = require('./utils/database');
+
 const sequelize = require('./utils/database');
 
 const app = express();
@@ -24,6 +23,7 @@ router.get('/',function(req,res){
     res.sendFile(path.join(__dirname+'/index.html'));
 });
 
+/*
 app.use((req,res,next) => {
     User.findByPk(1).then(user => {
         req.user = user;
@@ -33,9 +33,10 @@ app.use((req,res,next) => {
         console.log('Error find User');
     });
 });
+*/
 //Routing
 app.use('/',router);
-app.use('/feed',feedRoutes);
+require("./routes")(app);
 
 const Post = require('./models/post');
 const User = require('./models/user');
@@ -59,9 +60,8 @@ sequelize.authenticate().then( rec => {
         }
         return user;
     })
-    .then((user) => {
-        console.log(user);
-        app.listen(8080);
+    .then(user => {
+        console.log('Sync al DB con Successo');
     }).catch( err => {
         console.log('Sync al DB Error:',err);
     });
@@ -69,6 +69,7 @@ sequelize.authenticate().then( rec => {
      console.log('Connession al DB Error:',err);
 });
 
+app.listen(8080);
 
 
 

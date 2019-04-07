@@ -8,7 +8,7 @@ const Like = require('../models/like');
 
 //GET - ALL
 exports.getPosts = (req,res,next) => {
-    Post.findAll({include: [User]})
+    Post.findAll({include: [{ model : User, attributes : ['id','name','updatedAt']}]})
     .then(posts => { 
         promises = [];
         posts.forEach(p => {
@@ -155,6 +155,11 @@ exports.deletePost = (req,res,next) => {
         if(!post){
             res.status(404).json({ 
                 messages : 'Post Not Found',
+            });
+        }
+        if(post.userId != req.user.id){
+            res.status(404).json({ 
+                messages : 'Operazione non Permessa',
             });
         }
         return post.destroy();
