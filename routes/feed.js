@@ -13,7 +13,11 @@ router.post('/post',
         body('description').trim()
         .isLength({ min : 5}).withMessage('Description Maggiore di 3 Caratteri'),
     ]
-,feedController.createPosts);
+    ,feedController.createPost);
+    
+router.get('/post',feedController.getPosts);
+router.get('/post/:id',feedController.getPost);
+
 
 //NO AUTH | AUTH
 //GET ALL /feed/posts
@@ -35,7 +39,6 @@ router.post('/post',
 //4 END POINT
 
 
-router.get('/posts',feedController.getPosts);
 
 
 
