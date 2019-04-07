@@ -1,5 +1,5 @@
 const express = require('express');
-const { body } = require('express-validator/check');
+const { body,query } = require('express-validator/check');
 const router = express.Router();
 
 const feedController = require('../controllers/feed');
@@ -7,8 +7,11 @@ const feedController = require('../controllers/feed');
 //POST /feed/posts
 router.post('/post',
     [
-        body('title').trim().isLength({ min : 3}).exists(),
-        body('description').trim().isLength({ min : 5}),
+        body('title').trim()
+        .isLowercase().withMessage('Titolo LowerCase')
+        .isLength({ min : 3}).withMessage('Titolo Maggiore di 3 Caratteri'),
+        body('description').trim()
+        .isLength({ min : 5}).withMessage('Description Maggiore di 3 Caratteri'),
     ]
 ,feedController.createPosts);
 

@@ -45,7 +45,7 @@ exports.createPosts = (req,res,next) => {
 
     if(!errors.isEmpty()){
         return res.status(422).json({
-            message : 'Error input',
+            message : 'Error input Parametri',
             error : errors.array()
         });
     }
