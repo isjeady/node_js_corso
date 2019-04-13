@@ -1,6 +1,9 @@
 const { validationResult } = require('express-validator/check');
 const Sequelize = require('sequelize');
+const fs = require('fs');
 const Op = Sequelize.Op;
+
+const path = require('path');
 
 const Post = require('../models/post');
 const User = require('../models/user');
@@ -97,12 +100,23 @@ exports.createPost = (req,res,next) => {
         });
     }
 
+    if(!req.file){
+        return res.status(422).json({
+            message : 'Nessun Immagine Allegata..',
+            error : errors.array()
+        });
+    }
+
+    //const imageUrl = path.normalize(req.file.path); 
+    const imageUrl = req.file.path.replace(/\\/g,"/");
     const title = req.body.title;
     const description = req.body.description;
+
     //INSERT NEL DATABASE
     req.user.createPost({
         title : title,
         description : description,
+        image : imageUrl,
     }).then((post) => {
         res.status(201).json({ 
             messages : 'Success Operation',
@@ -162,6 +176,7 @@ exports.deletePost = (req,res,next) => {
                 messages : 'Operazione non Permessa',
             });
         }
+        clearImage(post.image);
         return post.destroy();
     }).then(() => {
         res.status(201).json({ 
@@ -172,3 +187,9 @@ exports.deletePost = (req,res,next) => {
     );
     
  };
+
+
+ const clearImage = filePath => {
+    filePath = path.join(__dirname, '..', filePath);
+    fs.unlink(filePath, err => console.log(err));
+  };
