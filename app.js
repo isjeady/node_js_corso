@@ -3,10 +3,10 @@ const router = express.Router();
 const path = require('path');
 const bodyParser = require('body-parser');
 
-
 const sequelize = require('./utils/database');
 
 const app = express();
+
 
 app.use(bodyParser.json()); //application/json
 
