@@ -16,11 +16,11 @@ const Post = sequelize.define('post',{
     description : {
         type: Sequelize.STRING,
         allowNull : true,
-    },            
+    },
     image : {
         type: Sequelize.STRING,
-        allowNull : true,
-    },      
+        allowNull : true
+    }      
 });
 
 module.exports = Post;

@@ -1,8 +1,9 @@
 const feedRoutes = require ('./feed');
 const authRoutes = require ('./auth');
+const galleryRoutes = require ('./gallery');
 
 module.exports = function (app) {
-    app.use('/feed',feedRoutes).use('/auth',authRoutes);
+    app.use('/feed',feedRoutes).use('/auth',authRoutes).use('/gallery',galleryRoutes);
 };
 
 

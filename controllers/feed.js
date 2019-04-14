@@ -1,4 +1,7 @@
 const { validationResult } = require('express-validator/check');
+const path = require('path');
+const fs = require('fs');
+
 const Sequelize = require('sequelize');
 const fs = require('fs');
 const Op = Sequelize.Op;
@@ -102,13 +105,11 @@ exports.createPost = (req,res,next) => {
 
     if(!req.file){
         return res.status(422).json({
-            message : 'Nessun Immagine Allegata..',
-            error : errors.array()
+            message : req.fileValidationError ? req.fileValidationError : 'Nessun immagine allegata...'
         });
     }
 
-    //const imageUrl = path.normalize(req.file.path); 
-    const imageUrl = req.file.path.replace(/\\/g,"/");
+    const image = req.file.path.replace(/\\/g,"/");
     const title = req.body.title;
     const description = req.body.description;
 
@@ -116,7 +117,7 @@ exports.createPost = (req,res,next) => {
     req.user.createPost({
         title : title,
         description : description,
-        image : imageUrl,
+        image : image
     }).then((post) => {
         res.status(201).json({ 
             messages : 'Success Operation',
@@ -153,6 +154,11 @@ exports.editPost = (req,res,next) => {
             }
             post.title = title;
             post.description = description;
+            if(req.file){
+                deleteImage(post.image);
+                const image = req.file.path.replace(/\\/g,"/");
+                post.image = image;
+            }
             return post.save();
         }).then((post) => {
             res.json({ post : post})
@@ -176,7 +182,6 @@ exports.deletePost = (req,res,next) => {
                 messages : 'Operazione non Permessa',
             });
         }
-        clearImage(post.image);
         return post.destroy();
     }).then(() => {
         res.status(201).json({ 
@@ -187,9 +192,3 @@ exports.deletePost = (req,res,next) => {
     );
     
  };
-
-
- const clearImage = filePath => {
-    filePath = path.join(__dirname, '..', filePath);
-    fs.unlink(filePath, err => console.log(err));
-  };

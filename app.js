@@ -9,23 +9,6 @@ const sequelize = require('./utils/database');
 
 const app = express();
 
-const storage = multer.diskStorage({
-    destination : (req,file,callback) => {
-        callback(null,'public/images');
-    },
-    filename : (req,file,callback) => {
-        //callback(null,Date.now() + '-' + file.originalname);
-        callback(null, uuidv4() + path.extname(file.originalname));
-    },
-});
-
-const fileFilter = ((req,file,callback) =>{
-    if(file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg'){
-        callback(null,true);
-    }else{
-        callback(null,false);
-    }
-});
 
 app.use(bodyParser.json()); //application/json
 app.use(
