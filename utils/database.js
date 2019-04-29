@@ -1,6 +1,8 @@
 const Sequelize = require('sequelize');
 
-const sequelize = new Sequelize('corso_nodejs','root','root',
+const sequelize = new Sequelize(process.env.NODE_DATABASE,
+    process.env.NODE_DATABASE_USER,
+    process.env.NODE_DATABASE_PW,
 {
     dialect : 'mysql',
     host: 'localhost'

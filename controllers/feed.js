@@ -3,10 +3,8 @@ const path = require('path');
 const fs = require('fs');
 
 const Sequelize = require('sequelize');
-const fs = require('fs');
 const Op = Sequelize.Op;
 
-const path = require('path');
 
 const Post = require('../models/post');
 const User = require('../models/user');

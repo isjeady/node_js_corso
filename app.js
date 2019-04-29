@@ -4,16 +4,21 @@ const path = require('path');
 const uuidv4 = require('uuid/v4');
 const bodyParser = require('body-parser');
 const multer = require('multer');
+const fs = require('fs');
+var morgan = require('morgan');
+
+var helmet = require('helmet');
 
 const sequelize = require('./utils/database');
 
 const app = express();
 
+app.use(helmet());
+
+const logStream = fs.createWriteStream(path.join(__dirname,'access.log'), { flags : 'a'});
+app.use(morgan('combined',{ stream : logStream}));
 
 app.use(bodyParser.json()); //application/json
-app.use(
-    multer({ storage : storage , fileFilter : fileFilter}).single('image')
-);
 
 app.use((req,res,next) => {
     res.setHeader('Access-Control-Allow-Origin','*');
@@ -28,17 +33,6 @@ router.get('/',function(req,res){
     res.sendFile(path.join(__dirname+'/index.html'));
 });
 
-/*
-app.use((req,res,next) => {
-    User.findByPk(1).then(user => {
-        req.user = user;
-        next();
-    })
-    .catch(err => {
-        console.log('Error find User');
-    });
-});
-*/
 //Routing
 app.use('/',router);
 require("./routes")(app);
@@ -53,6 +47,8 @@ Post.belongsTo(User,{ constraints : true, onDelete : 'CASCADE'});
 User.belongsToMany(Post,{ through : Like});
 Post.belongsToMany(User,{ through : Like});
 
+console.log(process.env.NODE_ENV || 'develop');
+
 
 sequelize.authenticate().then( rec => {
     console.log('Connessione Stabilita con Successo');
@@ -63,19 +59,11 @@ sequelize.authenticate().then( rec => {
     }).catch( err => {
         console.log('Sync al DB Error:',err);
     });
-    /*
-    .then((result) => {return User.findByPk(1);})
-    .then(user => {
-        if(!user){
-            return User.create({ name : 'Leandro', email : 'leandro@email.com', password : '123456'})
-        }
-        return user;
-    })*/
 }).catch( err => {
      console.log('Connession al DB Error:',err);
 });
 
-app.listen(8080);
+app.listen(process.env.NODE_PORT || 8080);
 
 
 
