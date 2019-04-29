@@ -5,6 +5,6 @@
         "NODE_DATABASE" : "corso_nodejs",
         "NODE_DATABASE_USER" : "root",
         "NODE_DATABASE_PW" : "root",
-        "NODE_DATABASE_URL" : "localhost"
+        "NODE_DATABASE_URL" : "localhost" 
     }
 }
