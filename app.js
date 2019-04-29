@@ -63,7 +63,7 @@ sequelize.authenticate().then( rec => {
      console.log('Connession al DB Error:',err);
 });
 
-app.listen(process.env.NODE_PORT || 5000);
+app.listen(process.env.PORT || 5000);
 
 
 
