@@ -45,7 +45,15 @@ router.post('/post',
     ],
     feedController.createPost);
 
-router.put('/post/:id',isAuth,feedController.editPost);
+router.put('/post/:id',
+    [isAuth,cpUpload],
+    [
+        body('title').trim()
+        .isLowercase().withMessage('Titolo LowerCase')
+        .isLength({ min : 3}).withMessage('Titolo Maggiore di 3 Caratteri'),
+        body('description').trim()
+        .isLength({ min : 5}).withMessage('Description Maggiore di 3 Caratteri'),
+    ],feedController.editPost);
 router.delete('/post/:id',isAuth,feedController.deletePost);
 
 router.get('/post',feedController.getPosts);
