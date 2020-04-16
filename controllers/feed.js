@@ -179,8 +179,10 @@ exports.deletePost = (req,res,next) => {
             res.status(404).json({ 
                 messages : 'Operazione non Permessa',
             });
+        }else{
+            return post.destroy();
         }
-        return post.destroy();
+        
     }).then(() => {
         res.status(201).json({ 
             messages : 'Success Operation',
