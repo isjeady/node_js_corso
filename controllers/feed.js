@@ -135,22 +135,31 @@ exports.editPost = (req,res,next) => {
  };
 
 
-exports.deletePost = (req,res,next) => {
+
+ exports.deletePost = (req,res,next) => {
     const postId = req.params.id;
 
     Post.findByPk(postId).then(post => {
         if(!post){
-            res.status(404).json({ 
-                messages : 'Post Not Found',
-            });
+            var e = new Error("Post Not Found");
+            e.statusCode = 404;
+            throw e;
+        }
+        if(post.userId != req.user.id){
+            var e = new Error("Operazione non Permessa");
+            e.statusCode = 402;
+            throw e;
         }
         return post.destroy();
     }).then(() => {
         res.status(201).json({ 
             messages : 'Success Operation',
         });
-    }).catch(
-            err => console.log(err)
-    );
+    }).catch((err) =>{
+        console.log(err.message);
+        res.status(err.statusCode).json({ 
+            messages : err.message,
+        });
+    });
     
  };
