@@ -1,77 +1,8 @@
 const { validationResult } = require('express-validator/check');
-const Sequelize = require('sequelize');
-const Op = Sequelize.Op;
+const path = require('path');
+const fs = require('fs');
 
 const Post = require('../models/post');
-
-//GET - ALL
-exports.getPosts = (req,res,next) => {
-    Post.findAll().then((posts) => {
-        console.log(posts);
-        res.json({ posts : posts})
-    }).catch(
-        err => console.log(err)
-    );
-};
-
-exports.getPostsByMe = (req,res,next) => {
-    //Post.findAll().then((posts) => {
-    req.user.getPosts().then((posts) => {
-        console.log(posts);
-        res.json({ posts : posts})
-    }).catch(
-        err => console.log(err)
-    );
-};
-//GET by ID
-exports.getPost = (req,res,next) => {
-   const postId = req.params.id;
-
-    Post.findByPk(postId).then((post) => {
-        if(!post){
-            res.status(404).json({ 
-                messages : 'Post Not Found',
-            });
-        }
-        res.json({ post : post})
-    }).catch(
-        err => console.log(err)
-    );
-};
-
-exports.likePost = (req,res,next) => {
-   const postId = req.params.id;
-
-    Post.findByPk(postId).then((post) => {
-        if(!post){
-            res.status(404).json({ 
-                messages : 'Post Not Found',
-            });
-        }
-        post.getUsers({ where : { id : req.user.id }}).then(records => {
-            const record = records[0]; 
-            if(!record){
-                post.addUser(req.user);
-                res.json({ post :'Like'})
-            }else{
-                post.removeUser(req.user);
-                res.json({ post : 'No Like'})
-            }
-        });
-    }).catch(
-        err => console.log(err)
-    );
-};
-
-exports.searchPost = (req,res,next) => {
-    const title = '%'+ req.query.title +'%';
-    Post.findAll({ where : { title : {[Op.like] : title}}}).then((posts) => {
-        console.log(posts);
-        res.json({ posts : posts})
-    }).catch(
-        err => console.log(err)
-    );
-};
 
 
 exports.createPost = (req,res,next) => {
@@ -84,13 +15,25 @@ exports.createPost = (req,res,next) => {
         });
     }
 
+    if(!req.file){
+        return res.status(422).json({
+            message : req.fileValidationError ? req.fileValidationError : 'Nessun immagine allegata...'
+        });
+    }
+
+    const image = req.file.path.replace(/\\/g,"/");
     const title = req.body.title;
     const description = req.body.description;
+
     //INSERT NEL DATABASE
-    req.user.createPost({
+    const post = new Post({
         title : title,
         description : description,
-    }).then((post) => {
+        image : image,
+        userId : req.user._id
+    });
+
+    post.save().then((post) => {
         res.status(201).json({ 
             messages : 'Success Operation',
             post : post
@@ -102,64 +45,161 @@ exports.createPost = (req,res,next) => {
     }); 
 };
 
-
 exports.editPost = (req,res,next) => {
-     const postId = req.params.id;
-     const errors = validationResult(req);
-
-        if(!errors.isEmpty()){
-            return res.status(422).json({
-                message : 'Error input Parametri',
-                error : errors.array()
-            });
-        }
-
-        const title = req.body.title;
-        const description = req.body.description;
-
-        req.user.getPosts({ where : { id : postId }}).then(posts => {
-            const post = posts[0];
-            if(!post){
-                res.status(404).json({ 
-                    messages : 'Post Not Found or Not Your Post',
-                });
-            }
-            post.title = title;
-            post.description = description;
-            return post.save();
-        }).then((post) => {
-            res.json({ post : post})
-        }).catch(
-            err => console.log(err)
-        );
- };
-
-
-
- exports.deletePost = (req,res,next) => {
+    const errors = validationResult(req);
     const postId = req.params.id;
 
-    Post.findByPk(postId).then(post => {
+       if(!errors.isEmpty()){
+           return res.status(422).json({
+               message : 'Error input Parametri',
+               error : errors.array()
+           });
+       }
+
+       const title = req.body.title;
+       const description = req.body.description;
+
+       Post.findById(postId).then((post) => {
+           if(!post){
+               res.status(404).json({ 
+                   messages : 'Post Not Found or Not Your Post',
+               });
+           }
+           post.title = title;
+           post.description = description;
+           if(req.file){
+               deleteImage(post.image);
+               const image = req.file.path.replace(/\\/g,"/");
+               post.image = image;
+           }
+           return post.save();
+       }).then((post) => {
+           res.json({ post : post})
+       }).catch(
+           err => console.log(err)
+       );
+};
+
+
+
+
+//GET - ALL
+exports.getPosts = (req,res,next) => {
+
+    Post.find()
+    .then(posts => {
+        res.json({ posts : posts});
+    }).catch(
+        err => console.log(err)
+    ); 
+
+
+    /* 
+    Post.findAll({include: [{ model : User, attributes : ['id','name','updatedAt']}]})
+    .then(posts => { 
+        promises = [];
+        posts.forEach(p => {
+            const postWithLike = Like.count({ where: { postId: p.id } })
+                .then(likes => {
+                    p.dataValues.likes = likes;
+                    return p;
+            });
+            promises.push(postWithLike);
+        });
+        return Promise.all(promises);
+    }).then(posts => {
+        res.json({ posts : posts});
+    }).catch(
+        err => console.log(err)
+    ); 
+    */
+};
+
+
+exports.getPostsByMe = (req,res,next) => {
+    Post.find({ userId : req.user._id})
+    .then(posts => {
+        res.json({ posts : posts});
+    }).catch(
+        err => console.log(err)
+    ); 
+};
+
+
+//GET by ID
+exports.getPost = (req,res,next) => {
+   const postId = req.params.id;
+
+    Post.findById(postId).then((post) => {
         if(!post){
-            var e = new Error("Post Not Found");
-            e.statusCode = 404;
-            throw e;
+            res.status(404).json({ 
+                messages : 'Post Not Found',
+            });
         }
-        if(post.userId != req.user.id){
-            var e = new Error("Operazione non Permessa");
-            e.statusCode = 402;
-            throw e;
+        res.json({ post : post})
+    }).catch(
+        err => console.log(err)
+    );
+};
+
+
+
+exports.likePost = (req,res,next) => {
+   const postId = req.params.id;
+
+   Post.findById(postId).then((post) => {
+        if(!post){
+            res.status(404).json({ 
+                messages : 'Post Not Found',
+            });
         }
-        return post.destroy();
-    }).then(() => {
+        post.like++;
+        post.save();
+        res.json({ post : post})
+    }).catch(
+        err => console.log(err)
+    );
+};
+
+
+exports.searchPost = (req,res,next) => {
+    const title = req.query.title ;
+
+    Post.find({title: {$regex: '.*' + title + '.*' }})
+    .then(posts => {
+        res.json({ posts : posts});
+    }).catch(
+        err => console.log(err)
+    ); 
+
+};
+
+
+
+
+
+
+
+
+exports.deletePost = (req,res,next) => {
+    const postId = req.params.id;
+
+    Post.findByIdAndRemove(postId)
+    .then(() => {
         res.status(201).json({ 
             messages : 'Success Operation',
         });
-    }).catch((err) =>{
-        console.log(err.message);
-        res.status(err.statusCode).json({ 
-            messages : err.message,
-        });
-    });
+    }).catch(
+        err => {console.log(err);
+        res.status(401).json({ 
+            messages : 'Post Not Found',
+        });}
+    );
     
+ };
+
+
+const deleteImage = filePath => {
+    filePath = path.join(__dirname, '..', filePath);
+    fs.unlink(filePath, err => console.log(err));
  };

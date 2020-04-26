@@ -1,3 +1,4 @@
+/*
 const Sequelize = require('sequelize');
 
 const sequelize = require('../utils/database');
@@ -12,3 +13,4 @@ const Like = sequelize.define('like',{
 });
 
 module.exports = Like;
+*/
