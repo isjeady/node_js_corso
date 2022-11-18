@@ -182,7 +182,6 @@ exports.deletePost = (req,res,next) => {
         }else{
             return post.destroy();
         }
-        
     }).then(() => {
         res.status(201).json({ 
             messages : 'Success Operation',
