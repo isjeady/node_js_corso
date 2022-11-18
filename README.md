@@ -1,1 +1,1 @@
-node_js_corso
+docker run -d --name mysql -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=corso_nodejs -p 3306:3306 \bitnami/mysql:latest

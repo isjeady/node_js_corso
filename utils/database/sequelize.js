@@ -1,4 +1,4 @@
-const Sequelize = require('sequelize');
+import { Sequelize } from "sequelize";
 
 const sequelize = new Sequelize(process.env.NODE_DATABASE,
     process.env.NODE_DATABASE_USER,
@@ -9,20 +9,17 @@ const sequelize = new Sequelize(process.env.NODE_DATABASE,
 }
 );
 
-module.exports = sequelize;
-
-
-
 
 /*
 const mysql = require('mysql2');
-
 const pool = mysql.createPool({
     host: 'localhost',
     database: 'corso_nodejs',
     user: 'root',
     password: 'root'
 });
-
 module.exports = pool.promise();
 */
+
+
+export { sequelize };

@@ -1,7 +1,8 @@
 {
     "env" : {
         "NODE_ENV" : "dev",
-        "NODE_PORT" : "8080",
+        "NODE_PORT" : "8084",
+        "NODE_JWT_SECRET" : "P0vPMIpDTbW6vn6RC9oXPQ3H66j19qhi",
         "NODE_DATABASE" : "corso_nodejs",
         "NODE_DATABASE_USER" : "root",
         "NODE_DATABASE_PW" : "root",

@@ -1,43 +1,47 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user');
+import jwt from "jsonwebtoken";
+import { UserModel } from "../models/userModel.js";
+import { errorsMessages } from "../utils/messages.js";
+import { statusCode } from "../utils/statusCode.js";
 
-module.exports = (req,res,next) => {
+export const isAuth = (req,res,next) => {
+
     console.log('AUTHORIZATION MIDDLEWARE');
     console.log(req.get('Authorization'));
 
     const auth = req.get('Authorization');
     
     if(!auth){
-        return res.status(401).json({
-            message : 'Non autorizzato!!!'
+        return res.status(statusCode.Unauthorized).json({
+            message : errorsMessages.login.unauthorized
         });
     }
 
     const token = auth.split(' ')[1];
+
     let decode;
     try{
-        decode = jwt.verify(token,'P0vPMIpDTbW6vn6RC9oXPQ3H66j19qhi');
+        decode = jwt.verify(token,process.env.NODE_JWT_SECRET);
     }catch (err){
         return res.status(500).json({
-            message : 'Non autorizzato!!!'
+            message : errorsMessages.login.unauthorized
         });
     }
 
     if(!decode){
-        return res.status(401).json({
-            message : 'Non autorizzato!!!'
+        return res.status(statusCode.Unauthorized).json({
+            message : errorsMessages.login.unauthorized
         });
     }
 
     let userId = decode.id;
 
-    User.findByPk(userId).then(user => {
+    UserModel.findByPk(userId).then(user => {
         req.user = user;
         next();
     })
     .catch(err => {
-        return res.status(401).json({
-            message : 'Non autorizzato!!!'
+        return res.status(statusCode.Unauthorized).json({
+            message : errorsMessages.login.unauthorized
         });
     });
 };

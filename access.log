@@ -1,0 +1,6 @@
+::ffff:127.0.0.1 - - [18/Nov/2022:17:32:05 +0000] "POST /api/auth/login HTTP/1.1" 422 232 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [18/Nov/2022:17:32:05 +0000] "POST /api/auth/register HTTP/1.1" 422 139 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [18/Nov/2022:17:32:09 +0000] "POST /api/auth/login HTTP/1.1" 422 232 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [18/Nov/2022:17:32:09 +0000] "POST /api/posts HTTP/1.1" 201 274 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [18/Nov/2022:17:32:11 +0000] "POST /api/auth/login HTTP/1.1" 422 232 "-" "insomnia/2022.6.0"
+::ffff:127.0.0.1 - - [18/Nov/2022:17:32:12 +0000] "POST /api/auth/login HTTP/1.1" 201 249 "-" "insomnia/2022.6.0"
