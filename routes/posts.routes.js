@@ -24,7 +24,7 @@ const fileFilter = ((req,file,callback) => {
     if(file.mimetype == 'image/png' || file.mimetype == 'image/jpg' || file.mimetype == 'image/jpeg'){
         callback(null,true);
     }else{
-        req.fileValidationError = errorsMessages.posts.fileError;
+        //req.fileValidationError = errorsMessages.posts.fileError;
         callback(null,false);
     }
 });

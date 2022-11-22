@@ -14,13 +14,15 @@ const createPost = (req,res,next) => {
         });
     }
 
-    if(!req.file){
-        return res.status(statusCode.UnprocessableEntity).json({
+    let image = "";
+
+    if(req.file){
+        /* return res.status(statusCode.UnprocessableEntity).json({
             message : req.fileValidationError ? req.fileValidationError : errorsMessages.posts.fileAttach
-        });
+        }); */
+        image = req.file.path.replace(/\\/g,"/");
     }
 
-    const image = req.file.path.replace(/\\/g,"/");
     const title = req.body.title;
     const slug = slugify(req.body.slug);
     const teaser = req.body.teaser;
