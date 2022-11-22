@@ -8,7 +8,21 @@ const PostModel = sequelize.define('post',{
         allowNull : false,
         primaryKey: true
     },
+    uuid : {
+        type: Sequelize.STRING,
+        allowNull : false,
+        unique: true
+    },      
+    slug : {
+        type: Sequelize.STRING,
+        allowNull : false,
+        unique: true
+    },      
     title : {
+        type: Sequelize.STRING,
+        allowNull : false,
+    },      
+    teaser : {
         type: Sequelize.STRING,
         allowNull : false,
     },      
@@ -19,6 +33,11 @@ const PostModel = sequelize.define('post',{
     image : {
         type: Sequelize.STRING,
         allowNull : true
+    },      
+    published : {
+        type: Sequelize.BOOLEAN,
+        allowNull : false,
+        defaultValue : false
     }      
 });
 
