@@ -41,9 +41,9 @@ router.get('/',function(req,res){
 //DATABASE
 sequelizeAuthenticate();
 
-app.listen(process.env.NODE_PORT || 5000);
+app.listen(process.env.PORT || 5000);
 
-console.log(`Server online ENV:${process.env.NODE_ENV || 'develop'} on http://${process.env.NODE_DATABASE_URL}:${process.env.NODE_PORT}...`);
+console.log(`Server online ENV:${process.env.NODE_ENV || 'develop'} on http://${process.env.NODE_DATABASE_URL}:${process.env.PORT}...`);
 
 
 
