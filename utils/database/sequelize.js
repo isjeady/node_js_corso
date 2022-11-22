@@ -5,7 +5,8 @@ const sequelize = new Sequelize(process.env.NODE_DATABASE,
     process.env.NODE_DATABASE_PW,
 {
     dialect : 'mysql',
-    host: process.env.NODE_DATABASE_URL
+    host: process.env.NODE_DATABASE_URL,
+    port : process.env.NODE_DATABASE_PORT || 3306
 }
 );
 
