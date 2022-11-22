@@ -1,15 +1,25 @@
-import { validationResult } from "express-validator";
-import { errorsMessages, successMessages } from "../../utils/messages.js";
-import { statusCode } from "../../utils/statusCode.js";
-import { PostModel } from "../../models/postModel.js";
-import { LikeModel } from "../../models/likeModel.js";
-import { UserModel } from "../../models/userModel.js";
-import { deleteImage } from "../../utils/file.helper.js";
 import { Op } from "sequelize";
+import { LikeModel } from "../../models/likeModel.js";
+import { PostModel } from "../../models/postModel.js";
+import { UserModel } from "../../models/userModel.js";
+import { errorsMessages } from "../../utils/messages.js";
+import { statusCode } from "../../utils/statusCode.js";
 
 //GET - ALL
 const getPosts = (req,res,next) => {
-    PostModel.findAll({include: [{ model : UserModel, attributes : ['id','name','updatedAt']}]})
+    PostModel.findAll({
+        include: [
+            { 
+                model : UserModel, 
+                attributes : ['id','name','updatedAt']
+            }
+        ],
+        where: {
+            published: {
+              [Op.not]: false
+            }
+        }
+    })
     .then(posts => { 
         let promises = [];
         posts.forEach(p => {
@@ -28,19 +38,11 @@ const getPosts = (req,res,next) => {
     );
 };
 
-const getPostsByMe = (req,res,next) => {
-    req.user.getPosts().then((posts) => {
-        res.json({ posts : posts})
-    }).catch(
-        err => console.log(err)
-    );
-};
-
  //GET by ID
 const getPost = (req,res,next) => {
     const postId = req.params.id;
      PostModel.findByPk(postId).then((post) => {
-        if(!post){
+        if(!post || !post.published){
             res.status(statusCode.NotFound).json({ 
                 messages : errorsMessages.posts.postNotFound,
             });
@@ -60,7 +62,17 @@ const getPost = (req,res,next) => {
 
 const searchPost = (req,res,next) => {
     const title = '%'+ req.query.title +'%';
-    PostModel.findAll({ where : { title : {[Op.like] : title}}}).then((posts) => {
+    PostModel.findAll(
+        { 
+            where : { 
+                title : {
+                    [Op.like] : title
+                },
+                published: {
+                    [Op.not]: false
+                }
+            }
+    }).then((posts) => {
         console.log(posts);
         res.json({ posts : posts})
     }).catch(
@@ -69,9 +81,8 @@ const searchPost = (req,res,next) => {
 };
 
 
-export { 
+export {
     getPosts,
-    getPost, 
-    getPostsByMe,
-    searchPost 
-}
+    getPost,
+    searchPost
+};

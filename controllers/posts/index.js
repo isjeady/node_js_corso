@@ -1,7 +1,6 @@
 import { 
     getPosts,
     getPost, 
-    getPostsByMe,
     searchPost 
 } from "./posts.controller.js";
 
@@ -14,7 +13,6 @@ import { likePost } from "./like_post.controller.js";
 export { 
     getPosts,
     getPost, 
-    getPostsByMe,
     searchPost, 
     createPost,
     editPost, 

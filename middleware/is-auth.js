@@ -26,8 +26,9 @@ export const isAuth = (req,res,next) => {
             message : errorsMessages.login.unauthorized
         });
     }
-
+    
     if(!decode){
+        
         return res.status(statusCode.Unauthorized).json({
             message : errorsMessages.login.unauthorized
         });
@@ -36,8 +37,12 @@ export const isAuth = (req,res,next) => {
     let userId = decode.id;
 
     UserModel.findByPk(userId).then(user => {
-        req.user = user;
-        next();
+        if(user){
+            req.user = user;
+            next();
+        }else{
+            throw new Error();
+        }
     })
     .catch(err => {
         return res.status(statusCode.Unauthorized).json({

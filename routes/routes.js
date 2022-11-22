@@ -8,11 +8,12 @@ const ME = '/me';
 
 //POSTS
 const POSTS = '/posts';
-const POSTS_ME = '/user/me';
 const POSTS_SEARCH = '/search';
 const POSTS_LIKE = '/like';
 
 const GALLERY = '/gallery';
+
+const USER = '/user';
 
 export { 
     API, 
@@ -21,8 +22,8 @@ export {
     REGISTER, 
     LOGIN, 
     ME,
-    POSTS_ME,
     POSTS_SEARCH,
     POSTS_LIKE,
-    GALLERY 
+    GALLERY,
+    USER 
 };

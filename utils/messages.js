@@ -16,6 +16,8 @@ export const errorsMessages = {
     posts : {
         titleLower : "Titolo LowerCase",
         titleLength : "Titolo Maggiore di 3 Caratteri",
+        teaserLength : "Teaser Maggiore di 3 Caratteri",
+        slugLength : "Slug Maggiore di 3 Caratteri",
         descriptionLength : "Description Maggiore di 3 Caratteri",
         fileError : "Estensione non consentita solo: image/png | image/jpg |  image/jpeg",
         fileAttach : "Nessun immagine allegata...",
